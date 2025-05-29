@@ -422,11 +422,12 @@ module.exports = __toCommonJS(src_exports);
 
 // src/components/default-ui/StepNumber.tsx
 var import_react9 = __toESM(require("react"));
-var import_react_native7 = require("react-native");
+var import_react_native8 = require("react-native");
 
 // src/contexts/CopilotProvider.tsx
 var import_mitt = __toESM(require("mitt"));
 var import_react8 = __toESM(require("react"));
+var import_react_native7 = require("react-native");
 
 // src/components/CopilotModal.tsx
 var import_react5 = __toESM(require("react"));
@@ -946,10 +947,34 @@ var CopilotProvider = (_a) => {
       setCurrentStepState(step);
       copilotEvents.emit("stepChange", step);
       if (scrollView != null && (step == null ? void 0 : step.wrapperRef.current)) {
-        step.wrapperRef.current.measureInWindow((x, y, width, height) => {
-          const yOffset = y > height ? y - height : 0;
-          scrollView.scrollTo({ y: yOffset, animated: true });
-        });
+        setTimeout(() => {
+          if (!step.wrapperRef.current)
+            return;
+          step.wrapperRef.current.measureInWindow((x, y, width, height) => {
+            const windowHeight = import_react_native7.Dimensions.get("window").height;
+            const elementTop = y;
+            const elementBottom = y + height;
+            const elementCenter = y + height / 2;
+            const safeAreaTop = 100;
+            const safeAreaBottom = windowHeight - 100;
+            if (elementTop < safeAreaTop || elementBottom > safeAreaBottom) {
+              const targetCenterY = windowHeight / 2;
+              const scrollOffset = elementCenter - targetCenterY;
+              const newScrollY = Math.max(0, scrollOffset);
+              console.log("Scroll calculation:", {
+                elementTop,
+                elementBottom,
+                elementCenter,
+                windowHeight,
+                newScrollY
+              });
+              scrollView.scrollTo({
+                y: newScrollY,
+                animated: true
+              });
+            }
+          });
+        }, 300);
       }
       setTimeout(
         () => {
@@ -957,7 +982,7 @@ var CopilotProvider = (_a) => {
             void moveModalToStep(step);
           }
         },
-        scrollView != null ? 100 : 0
+        scrollView != null ? 500 : 0
       );
     }),
     [copilotEvents, moveModalToStep, scrollView, setCurrentStepState]
@@ -1059,7 +1084,7 @@ var useCopilot = () => {
 init_style();
 var StepNumber = () => {
   const { currentStepNumber } = useCopilot();
-  return /* @__PURE__ */ import_react9.default.createElement(import_react_native7.View, { style: styles.stepNumber }, /* @__PURE__ */ import_react9.default.createElement(import_react_native7.Text, { style: styles.stepNumberText }, currentStepNumber));
+  return /* @__PURE__ */ import_react9.default.createElement(import_react_native8.View, { style: styles.stepNumber }, /* @__PURE__ */ import_react9.default.createElement(import_react_native8.Text, { style: styles.stepNumberText }, currentStepNumber));
 };
 
 // src/hocs/walkthroughable.tsx

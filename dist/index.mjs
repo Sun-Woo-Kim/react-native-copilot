@@ -417,6 +417,7 @@ import React6, {
   useRef as useRef5,
   useState as useState6
 } from "react";
+import { Dimensions as Dimensions2 } from "react-native";
 
 // src/components/CopilotModal.tsx
 import React5, {
@@ -954,10 +955,34 @@ var CopilotProvider = (_a) => {
       setCurrentStepState(step);
       copilotEvents.emit("stepChange", step);
       if (scrollView != null && (step == null ? void 0 : step.wrapperRef.current)) {
-        step.wrapperRef.current.measureInWindow((x, y, width, height) => {
-          const yOffset = y > height ? y - height : 0;
-          scrollView.scrollTo({ y: yOffset, animated: true });
-        });
+        setTimeout(() => {
+          if (!step.wrapperRef.current)
+            return;
+          step.wrapperRef.current.measureInWindow((x, y, width, height) => {
+            const windowHeight = Dimensions2.get("window").height;
+            const elementTop = y;
+            const elementBottom = y + height;
+            const elementCenter = y + height / 2;
+            const safeAreaTop = 100;
+            const safeAreaBottom = windowHeight - 100;
+            if (elementTop < safeAreaTop || elementBottom > safeAreaBottom) {
+              const targetCenterY = windowHeight / 2;
+              const scrollOffset = elementCenter - targetCenterY;
+              const newScrollY = Math.max(0, scrollOffset);
+              console.log("Scroll calculation:", {
+                elementTop,
+                elementBottom,
+                elementCenter,
+                windowHeight,
+                newScrollY
+              });
+              scrollView.scrollTo({
+                y: newScrollY,
+                animated: true
+              });
+            }
+          });
+        }, 300);
       }
       setTimeout(
         () => {
@@ -965,7 +990,7 @@ var CopilotProvider = (_a) => {
             void moveModalToStep(step);
           }
         },
-        scrollView != null ? 100 : 0
+        scrollView != null ? 500 : 0
       );
     }),
     [copilotEvents, moveModalToStep, scrollView, setCurrentStepState]

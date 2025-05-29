@@ -8,7 +8,7 @@ import React, {
   useState,
   type PropsWithChildren,
 } from "react";
-import { type ScrollView } from "react-native";
+import { type ScrollView, Dimensions } from "react-native";
 import {
   CopilotModal,
   type CopilotModalHandle,
@@ -105,10 +105,40 @@ export const CopilotProvider = ({
       copilotEvents.emit("stepChange", step);
 
       if (scrollView != null && step?.wrapperRef.current) {
-        step.wrapperRef.current.measureInWindow((x, y, width, height) => {
-          const yOffset = y > height ? y - height : 0;
-          scrollView.scrollTo({ y: yOffset, animated: true });
-        });
+        setTimeout(() => {
+          if (!step.wrapperRef.current) return;
+
+          step.wrapperRef.current.measureInWindow((x, y, width, height) => {
+            const windowHeight = Dimensions.get("window").height;
+
+            const elementTop = y;
+            const elementBottom = y + height;
+            const elementCenter = y + height / 2;
+
+            const safeAreaTop = 100;
+            const safeAreaBottom = windowHeight - 100;
+
+            if (elementTop < safeAreaTop || elementBottom > safeAreaBottom) {
+              const targetCenterY = windowHeight / 2;
+              const scrollOffset = elementCenter - targetCenterY;
+
+              const newScrollY = Math.max(0, scrollOffset);
+
+              console.log("Scroll calculation:", {
+                elementTop,
+                elementBottom,
+                elementCenter,
+                windowHeight,
+                newScrollY,
+              });
+
+              scrollView.scrollTo({
+                y: newScrollY,
+                animated: true,
+              });
+            }
+          });
+        }, 300);
       }
 
       setTimeout(
@@ -117,7 +147,7 @@ export const CopilotProvider = ({
             void moveModalToStep(step);
           }
         },
-        scrollView != null ? 100 : 0,
+        scrollView != null ? 500 : 0,
       );
     },
     [copilotEvents, moveModalToStep, scrollView, setCurrentStepState],
