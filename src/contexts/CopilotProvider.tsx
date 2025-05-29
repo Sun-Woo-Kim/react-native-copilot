@@ -106,37 +106,51 @@ export const CopilotProvider = ({
 
       if (scrollView != null && step?.wrapperRef.current) {
         setTimeout(() => {
-          if (!step.wrapperRef.current) return;
+          const wrapper = step.wrapperRef.current;
+          if (!wrapper) return;
 
-          step.wrapperRef.current.measureInWindow((x, y, width, height) => {
-            const windowHeight = Dimensions.get("window").height;
+          wrapper.measure((fx, fy, width, height, px, py) => {
+            wrapper.measureInWindow((x, y, windowWidth, windowHeight) => {
+              const screenHeight = Dimensions.get("window").height;
 
-            const elementTop = y;
-            const elementBottom = y + height;
-            const elementCenter = y + height / 2;
+              const elementTop = y;
+              const elementBottom = y + height;
+              const elementCenter = y + height / 2;
 
-            const safeAreaTop = 100;
-            const safeAreaBottom = windowHeight - 100;
+              const safeAreaTop = 150;
+              const safeAreaBottom = screenHeight - 150;
 
-            if (elementTop < safeAreaTop || elementBottom > safeAreaBottom) {
-              const targetCenterY = windowHeight / 2;
-              const scrollOffset = elementCenter - targetCenterY;
+              if (
+                elementTop < safeAreaTop ||
+                elementBottom > safeAreaBottom ||
+                elementBottom > screenHeight - 50
+              ) {
+                const targetPositionOnScreen = screenHeight * 0.4;
+                const currentScrollY = py - y;
+                const scrollDelta = elementTop - targetPositionOnScreen;
 
-              const newScrollY = Math.max(0, scrollOffset);
+                const newScrollY = currentScrollY + scrollDelta;
+                const safeScrollY = Math.max(0, newScrollY);
 
-              console.log("Scroll calculation:", {
-                elementTop,
-                elementBottom,
-                elementCenter,
-                windowHeight,
-                newScrollY,
-              });
+                console.log("Enhanced scroll calculation:", {
+                  elementPosition: {
+                    top: elementTop,
+                    bottom: elementBottom,
+                    center: elementCenter,
+                  },
+                  elementInScrollView: py,
+                  screenHeight,
+                  currentScrollY,
+                  targetPosition: targetPositionOnScreen,
+                  newScrollY: safeScrollY,
+                });
 
-              scrollView.scrollTo({
-                y: newScrollY,
-                animated: true,
-              });
-            }
+                scrollView.scrollTo({
+                  y: safeScrollY,
+                  animated: true,
+                });
+              }
+            });
           });
         }, 300);
       }
@@ -147,7 +161,7 @@ export const CopilotProvider = ({
             void moveModalToStep(step);
           }
         },
-        scrollView != null ? 500 : 0,
+        scrollView != null ? 600 : 0,
       );
     },
     [copilotEvents, moveModalToStep, scrollView, setCurrentStepState],

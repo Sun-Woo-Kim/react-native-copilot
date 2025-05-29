@@ -948,31 +948,41 @@ var CopilotProvider = (_a) => {
       copilotEvents.emit("stepChange", step);
       if (scrollView != null && (step == null ? void 0 : step.wrapperRef.current)) {
         setTimeout(() => {
-          if (!step.wrapperRef.current)
+          const wrapper = step.wrapperRef.current;
+          if (!wrapper)
             return;
-          step.wrapperRef.current.measureInWindow((x, y, width, height) => {
-            const windowHeight = import_react_native7.Dimensions.get("window").height;
-            const elementTop = y;
-            const elementBottom = y + height;
-            const elementCenter = y + height / 2;
-            const safeAreaTop = 100;
-            const safeAreaBottom = windowHeight - 100;
-            if (elementTop < safeAreaTop || elementBottom > safeAreaBottom) {
-              const targetCenterY = windowHeight / 2;
-              const scrollOffset = elementCenter - targetCenterY;
-              const newScrollY = Math.max(0, scrollOffset);
-              console.log("Scroll calculation:", {
-                elementTop,
-                elementBottom,
-                elementCenter,
-                windowHeight,
-                newScrollY
-              });
-              scrollView.scrollTo({
-                y: newScrollY,
-                animated: true
-              });
-            }
+          wrapper.measure((fx, fy, width, height, px, py) => {
+            wrapper.measureInWindow((x, y, windowWidth, windowHeight) => {
+              const screenHeight = import_react_native7.Dimensions.get("window").height;
+              const elementTop = y;
+              const elementBottom = y + height;
+              const elementCenter = y + height / 2;
+              const safeAreaTop = 150;
+              const safeAreaBottom = screenHeight - 150;
+              if (elementTop < safeAreaTop || elementBottom > safeAreaBottom || elementBottom > screenHeight - 50) {
+                const targetPositionOnScreen = screenHeight * 0.4;
+                const currentScrollY = py - y;
+                const scrollDelta = elementTop - targetPositionOnScreen;
+                const newScrollY = currentScrollY + scrollDelta;
+                const safeScrollY = Math.max(0, newScrollY);
+                console.log("Enhanced scroll calculation:", {
+                  elementPosition: {
+                    top: elementTop,
+                    bottom: elementBottom,
+                    center: elementCenter
+                  },
+                  elementInScrollView: py,
+                  screenHeight,
+                  currentScrollY,
+                  targetPosition: targetPositionOnScreen,
+                  newScrollY: safeScrollY
+                });
+                scrollView.scrollTo({
+                  y: safeScrollY,
+                  animated: true
+                });
+              }
+            });
           });
         }, 300);
       }
@@ -982,7 +992,7 @@ var CopilotProvider = (_a) => {
             void moveModalToStep(step);
           }
         },
-        scrollView != null ? 500 : 0
+        scrollView != null ? 600 : 0
       );
     }),
     [copilotEvents, moveModalToStep, scrollView, setCurrentStepState]
