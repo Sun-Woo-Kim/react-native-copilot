@@ -115,7 +115,7 @@ export const CopilotProvider = ({
             const elementTopInScrollView = py;
             const elementHeight = height;
 
-            const targetPositionOnScreen = screenHeight * 0.2;
+            const targetPositionOnScreen = screenHeight * 0.15;
 
             let targetScrollY = elementTopInScrollView - targetPositionOnScreen;
 
@@ -123,40 +123,65 @@ export const CopilotProvider = ({
               targetScrollY = elementTopInScrollView - 50;
             }
 
-            const safeScrollY = Math.max(0, targetScrollY);
+            const safeScrollY = Math.max(0, Math.round(targetScrollY));
 
-            console.log("Final scroll calculation:", {
+            console.log("Scroll calculation:", {
+              step: step.name,
               elementTopInScrollView,
               elementHeight,
               screenHeight,
               targetPositionOnScreen,
               calculatedScrollY: safeScrollY,
-              description: `Moving element from ${elementTopInScrollView}px to screen position ${targetPositionOnScreen}px`,
             });
 
-            scrollView.scrollTo({
-              y: safeScrollY,
-              animated: true,
-            });
+            const executeScroll = () => {
+              scrollView.scrollTo({
+                y: safeScrollY,
+                animated: true,
+              });
 
-            setTimeout(() => {
-              if (wrapper && scrollView) {
-                wrapper.measureInWindow((x, y, windowWidth, windowHeight) => {
-                  if (y > screenHeight - 100 || y < 50) {
-                    console.log(
-                      "Backup scroll triggered, element still out of view at:",
-                      y,
-                    );
-                    scrollView.scrollTo({
-                      y: safeScrollY,
-                      animated: true,
-                    });
-                  }
+              requestAnimationFrame(() => {
+                scrollView.scrollTo({
+                  y: safeScrollY,
+                  animated: true,
                 });
-              }
-            }, 500);
+              });
+            };
+
+            executeScroll();
+
+            let retryCount = 0;
+            const maxRetries = 3;
+
+            const verifyScroll = () => {
+              setTimeout(() => {
+                if (wrapper && scrollView && retryCount < maxRetries) {
+                  wrapper.measureInWindow((x, y, windowWidth, windowHeight) => {
+                    const isOutOfView = y > screenHeight - 150 || y < 50;
+
+                    if (isOutOfView) {
+                      retryCount++;
+                      console.log(
+                        `Retry scroll ${retryCount}/${maxRetries}, element at y:${y}, target was ${targetPositionOnScreen}`,
+                      );
+                      executeScroll();
+
+                      if (retryCount < maxRetries) {
+                        verifyScroll();
+                      }
+                    } else {
+                      console.log(
+                        `Scroll successful for ${step.name}, element now at y:${y}`,
+                      );
+                    }
+                  });
+                }
+              }, 400);
+            };
+
+            verifyScroll();
           });
-        }, 300);
+        }, 350);
       }
 
       setTimeout(
@@ -165,7 +190,7 @@ export const CopilotProvider = ({
             void moveModalToStep(step);
           }
         },
-        scrollView != null ? 800 : 0,
+        scrollView != null ? 1000 : 0,
       );
     },
     [copilotEvents, moveModalToStep, scrollView, setCurrentStepState],
