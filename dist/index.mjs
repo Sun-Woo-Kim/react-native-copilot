@@ -543,7 +543,7 @@ var CopilotModal = forwardRef(
     }) => {
       layoutRef.current = newLayout;
     };
-    const measure = () => __async(this, null, function* () {
+    const measure = () => __async(null, null, function* () {
       return yield new Promise((resolve) => {
         const updateLayout = () => {
           if (layoutRef.current.width !== 0) {
@@ -556,7 +556,7 @@ var CopilotModal = forwardRef(
       });
     });
     const _animateMove = useCallback3(
-      (rect) => __async(this, null, function* () {
+      (rect) => __async(null, null, function* () {
         var _a;
         const newMeasuredLayout = yield measure();
         if (!androidStatusBarVisible && Platform.OS === "android") {
@@ -656,9 +656,9 @@ var CopilotModal = forwardRef(
       ]
     );
     const animateMove = useCallback3(
-      (rect) => __async(this, null, function* () {
+      (rect) => __async(null, null, function* () {
         yield new Promise((resolve) => {
-          const frame = () => __async(this, null, function* () {
+          const frame = () => __async(null, null, function* () {
             yield _animateMove(rect);
             resolve();
           });
@@ -802,7 +802,7 @@ var useStateWithAwait = (initialState) => {
   });
   const newDesiredValue = useRef4(initialState);
   const [state, setState] = useState4(initialState);
-  const setStateWithAwait = (newState) => __async(void 0, null, function* () {
+  const setStateWithAwait = (newState) => __async(null, null, function* () {
     const pending = new Promise((resolve) => {
       endPending.current = resolve;
     });
@@ -935,7 +935,7 @@ var CopilotProvider = (_a) => {
     unregisterStep
   } = useStepsMap();
   const moveModalToStep = useCallback5(
-    (step) => __async(void 0, null, function* () {
+    (step) => __async(null, null, function* () {
       var _a2;
       const size = yield step == null ? void 0 : step.measure();
       if (!size) {
@@ -951,14 +951,13 @@ var CopilotProvider = (_a) => {
     [verticalOffset]
   );
   const setCurrentStep = useCallback5(
-    (step, move = true) => __async(void 0, null, function* () {
+    (step, move = true) => __async(null, null, function* () {
       setCurrentStepState(step);
       copilotEvents.emit("stepChange", step);
       if (scrollView != null && (step == null ? void 0 : step.wrapperRef.current)) {
         setTimeout(() => {
           const wrapper = step.wrapperRef.current;
-          if (!wrapper)
-            return;
+          if (!wrapper) return;
           wrapper.measure((fx, fy, width, height, px, py) => {
             wrapper.measureInWindow((x, y, windowWidth, windowHeight) => {
               const screenHeight = Dimensions2.get("window").height;
@@ -1006,7 +1005,7 @@ var CopilotProvider = (_a) => {
     [copilotEvents, moveModalToStep, scrollView, setCurrentStepState]
   );
   const start = useCallback5(
-    (fromStep, suppliedScrollView = null) => __async(void 0, null, function* () {
+    (fromStep, suppliedScrollView = null) => __async(null, null, function* () {
       if (scrollView == null) {
         setScrollView(suppliedScrollView);
       }
@@ -1038,20 +1037,20 @@ var CopilotProvider = (_a) => {
       steps
     ]
   );
-  const stop = useCallback5(() => __async(void 0, null, function* () {
+  const stop = useCallback5(() => __async(null, null, function* () {
     yield setVisibility(false);
     copilotEvents.emit("stop");
   }), [copilotEvents, setVisibility]);
-  const next = useCallback5(() => __async(void 0, null, function* () {
+  const next = useCallback5(() => __async(null, null, function* () {
     yield setCurrentStep(getNextStep());
   }), [getNextStep, setCurrentStep]);
   const nth = useCallback5(
-    (n) => __async(void 0, null, function* () {
+    (n) => __async(null, null, function* () {
       yield setCurrentStep(getNthStep(n));
     }),
     [getNthStep, setCurrentStep]
   );
-  const prev = useCallback5(() => __async(void 0, null, function* () {
+  const prev = useCallback5(() => __async(null, null, function* () {
     yield setCurrentStep(getPrevStep());
   }), [getPrevStep, setCurrentStep]);
   const value = useMemo2(
@@ -1128,7 +1127,7 @@ var CopilotStep = ({
   const registeredName = useRef6(null);
   const { registerStep, unregisterStep } = useCopilot();
   const wrapperRef = React9.useRef(null);
-  const measure = () => __async(void 0, null, function* () {
+  const measure = () => __async(null, null, function* () {
     return yield new Promise((resolve) => {
       const measure2 = () => {
         if (wrapperRef.current != null && "measureInWindow" in wrapperRef.current) {

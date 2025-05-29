@@ -410,15 +410,15 @@ var init_ViewMask = __esm({
 });
 
 // src/index.ts
-var src_exports = {};
-__export(src_exports, {
+var index_exports = {};
+__export(index_exports, {
   CopilotProvider: () => CopilotProvider,
   CopilotStep: () => CopilotStep,
   DefaultUI: () => DefaultUI,
   useCopilot: () => useCopilot,
   walkthroughable: () => walkthroughable
 });
-module.exports = __toCommonJS(src_exports);
+module.exports = __toCommonJS(index_exports);
 
 // src/components/default-ui/StepNumber.tsx
 var import_react9 = __toESM(require("react"));
@@ -535,7 +535,7 @@ var CopilotModal = (0, import_react5.forwardRef)(
     }) => {
       layoutRef.current = newLayout;
     };
-    const measure = () => __async(this, null, function* () {
+    const measure = () => __async(null, null, function* () {
       return yield new Promise((resolve) => {
         const updateLayout = () => {
           if (layoutRef.current.width !== 0) {
@@ -548,7 +548,7 @@ var CopilotModal = (0, import_react5.forwardRef)(
       });
     });
     const _animateMove = (0, import_react5.useCallback)(
-      (rect) => __async(this, null, function* () {
+      (rect) => __async(null, null, function* () {
         var _a;
         const newMeasuredLayout = yield measure();
         if (!androidStatusBarVisible && import_react_native6.Platform.OS === "android") {
@@ -648,9 +648,9 @@ var CopilotModal = (0, import_react5.forwardRef)(
       ]
     );
     const animateMove = (0, import_react5.useCallback)(
-      (rect) => __async(this, null, function* () {
+      (rect) => __async(null, null, function* () {
         yield new Promise((resolve) => {
-          const frame = () => __async(this, null, function* () {
+          const frame = () => __async(null, null, function* () {
             yield _animateMove(rect);
             resolve();
           });
@@ -794,7 +794,7 @@ var useStateWithAwait = (initialState) => {
   });
   const newDesiredValue = (0, import_react6.useRef)(initialState);
   const [state, setState] = (0, import_react6.useState)(initialState);
-  const setStateWithAwait = (newState) => __async(void 0, null, function* () {
+  const setStateWithAwait = (newState) => __async(null, null, function* () {
     const pending = new Promise((resolve) => {
       endPending.current = resolve;
     });
@@ -927,7 +927,7 @@ var CopilotProvider = (_a) => {
     unregisterStep
   } = useStepsMap();
   const moveModalToStep = (0, import_react8.useCallback)(
-    (step) => __async(void 0, null, function* () {
+    (step) => __async(null, null, function* () {
       var _a2;
       const size = yield step == null ? void 0 : step.measure();
       if (!size) {
@@ -943,14 +943,13 @@ var CopilotProvider = (_a) => {
     [verticalOffset]
   );
   const setCurrentStep = (0, import_react8.useCallback)(
-    (step, move = true) => __async(void 0, null, function* () {
+    (step, move = true) => __async(null, null, function* () {
       setCurrentStepState(step);
       copilotEvents.emit("stepChange", step);
       if (scrollView != null && (step == null ? void 0 : step.wrapperRef.current)) {
         setTimeout(() => {
           const wrapper = step.wrapperRef.current;
-          if (!wrapper)
-            return;
+          if (!wrapper) return;
           wrapper.measure((fx, fy, width, height, px, py) => {
             wrapper.measureInWindow((x, y, windowWidth, windowHeight) => {
               const screenHeight = import_react_native7.Dimensions.get("window").height;
@@ -998,7 +997,7 @@ var CopilotProvider = (_a) => {
     [copilotEvents, moveModalToStep, scrollView, setCurrentStepState]
   );
   const start = (0, import_react8.useCallback)(
-    (fromStep, suppliedScrollView = null) => __async(void 0, null, function* () {
+    (fromStep, suppliedScrollView = null) => __async(null, null, function* () {
       if (scrollView == null) {
         setScrollView(suppliedScrollView);
       }
@@ -1030,20 +1029,20 @@ var CopilotProvider = (_a) => {
       steps
     ]
   );
-  const stop = (0, import_react8.useCallback)(() => __async(void 0, null, function* () {
+  const stop = (0, import_react8.useCallback)(() => __async(null, null, function* () {
     yield setVisibility(false);
     copilotEvents.emit("stop");
   }), [copilotEvents, setVisibility]);
-  const next = (0, import_react8.useCallback)(() => __async(void 0, null, function* () {
+  const next = (0, import_react8.useCallback)(() => __async(null, null, function* () {
     yield setCurrentStep(getNextStep());
   }), [getNextStep, setCurrentStep]);
   const nth = (0, import_react8.useCallback)(
-    (n) => __async(void 0, null, function* () {
+    (n) => __async(null, null, function* () {
       yield setCurrentStep(getNthStep(n));
     }),
     [getNthStep, setCurrentStep]
   );
-  const prev = (0, import_react8.useCallback)(() => __async(void 0, null, function* () {
+  const prev = (0, import_react8.useCallback)(() => __async(null, null, function* () {
     yield setCurrentStep(getPrevStep());
   }), [getPrevStep, setCurrentStep]);
   const value = (0, import_react8.useMemo)(
@@ -1120,7 +1119,7 @@ var CopilotStep = ({
   const registeredName = (0, import_react11.useRef)(null);
   const { registerStep, unregisterStep } = useCopilot();
   const wrapperRef = import_react11.default.useRef(null);
-  const measure = () => __async(void 0, null, function* () {
+  const measure = () => __async(null, null, function* () {
     return yield new Promise((resolve) => {
       const measure2 = () => {
         if (wrapperRef.current != null && "measureInWindow" in wrapperRef.current) {
