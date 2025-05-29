@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import { type NativeMethods } from "react-native";
+import { type View } from "react-native";
 
 import { useCopilot } from "../contexts/CopilotProvider";
 
@@ -20,7 +20,7 @@ export const CopilotStep = ({
 }: Props) => {
   const registeredName = useRef<string | null>(null);
   const { registerStep, unregisterStep } = useCopilot();
-  const wrapperRef = React.useRef<NativeMethods | null>(null);
+  const wrapperRef = React.useRef<View | null>(null);
 
   const measure = async () => {
     return await new Promise<{
@@ -31,8 +31,8 @@ export const CopilotStep = ({
     }>((resolve) => {
       const measure = () => {
         // Wait until the wrapper element appears
-        if (wrapperRef.current != null && "measure" in wrapperRef.current) {
-          wrapperRef.current.measure((_ox, _oy, width, height, x, y) => {
+        if (wrapperRef.current != null && "measureInWindow" in wrapperRef.current) {
+          wrapperRef.current.measureInWindow((x, y, width, height) => {
             resolve({
               x,
               y,

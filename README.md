@@ -40,6 +40,16 @@ npm install --save react-native-copilot
 
 **Optional**: If you want to have the smooth SVG animation, you should install and link [`react-native-svg`](https://github.com/software-mansion/react-native-svg).
 
+## React Native 0.76+ New Architecture Support
+
+Starting from version 3.3.4, react-native-copilot supports React Native 0.76's New Architecture. The library has been updated to use:
+
+- `measureInWindow` instead of the deprecated `measureLayout`
+- `View` type instead of `NativeMethods` for better compatibility
+- Removed dependency on `findNodeHandle` which is deprecated in the New Architecture
+
+If you're using React Native 0.76 or later with the New Architecture enabled, the library will work seamlessly without any additional configuration.
+
 ## Usage
 
 Wrap the portion of your app that you want to use copilot with inside `<CopilotProvider>`:

@@ -1,4 +1,12 @@
-<<<<<<< Updated upstream
+## 3.3.4
+
+### Patch Changes
+
+- Support for React Native 0.76 New Architecture
+- Replace deprecated `measureLayout` with `measureInWindow`
+- Update types to use `View` instead of `NativeMethods`
+- Remove dependency on deprecated `findNodeHandle`
+- Fix iOS scrolling issues and Android crashes in New Architecture
 
 ## 3.3.3
 

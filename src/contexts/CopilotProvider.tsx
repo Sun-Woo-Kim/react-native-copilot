@@ -104,17 +104,14 @@ export const CopilotProvider = ({
       setCurrentStepState(step);
       copilotEvents.emit("stepChange", step);
 
-      if (scrollView != null) {
-        const nodeHandle = findNodeHandle(scrollView);
-        if (nodeHandle) {
-          step?.wrapperRef.current?.measureLayout(
-            nodeHandle,
-            (_x, y, _w, h) => {
-              const yOffset = y > 0 ? y - h / 2 : 0;
-              scrollView.scrollTo({ y: yOffset, animated: false });
-            }
-          );
-        }
+      if (scrollView != null && step?.wrapperRef.current) {
+        step.wrapperRef.current.measureInWindow((x, y, width, height) => {
+          scrollView.measureInWindow((scrollX, scrollY, scrollWidth, scrollHeight) => {
+            const relativeY = y - scrollY;
+            const yOffset = relativeY > 0 ? relativeY - height / 2 : 0;
+            scrollView.scrollTo({ y: yOffset, animated: false });
+          });
+        });
       }
 
       setTimeout(

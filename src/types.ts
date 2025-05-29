@@ -1,17 +1,17 @@
 import type {
   Animated,
   LayoutRectangle,
-  NativeMethods,
+  View,
   ViewStyle,
 } from "react-native";
 
-export type WalktroughedComponent = NativeMethods & React.ComponentType<any>;
+export type WalktroughedComponent = View & React.ComponentType<any>;
 
 export interface Step {
   name: string;
   order: number;
   visible: boolean;
-  wrapperRef: React.RefObject<NativeMethods>;
+  wrapperRef: React.RefObject<View>;
   measure: () => Promise<LayoutRectangle>;
   text: string;
 }
