@@ -954,19 +954,38 @@ var CopilotProvider = (_a) => {
             const screenHeight = import_react_native7.Dimensions.get("window").height;
             const elementTopInScrollView = py;
             const elementHeight = height;
-            const targetPositionOnScreen = screenHeight * 0.15;
-            let targetScrollY = elementTopInScrollView - targetPositionOnScreen;
+            const elementCenter = py + height / 2;
+            let targetPositionOnScreen;
+            let targetScrollY;
             if (elementHeight > screenHeight * 0.7) {
-              targetScrollY = elementTopInScrollView - 50;
+              targetPositionOnScreen = 50;
+              targetScrollY = elementTopInScrollView - targetPositionOnScreen;
+            } else {
+              const screenCenter = screenHeight / 2;
+              targetScrollY = elementCenter - screenCenter;
+              const bottomBuffer = 200;
+              const wouldBeBottomPosition = elementTopInScrollView - targetScrollY + elementHeight;
+              if (wouldBeBottomPosition > screenHeight - bottomBuffer) {
+                targetPositionOnScreen = screenHeight * 0.3;
+                targetScrollY = elementTopInScrollView - targetPositionOnScreen;
+              }
             }
             const safeScrollY = Math.max(0, Math.round(targetScrollY));
-            console.log("Scroll calculation:", {
+            console.log("Enhanced scroll calculation:", {
               step: step.name,
-              elementTopInScrollView,
-              elementHeight,
-              screenHeight,
-              targetPositionOnScreen,
-              calculatedScrollY: safeScrollY
+              element: {
+                top: elementTopInScrollView,
+                height: elementHeight,
+                center: elementCenter
+              },
+              screen: {
+                height: screenHeight,
+                targetPosition: targetPositionOnScreen || screenHeight / 2
+              },
+              scroll: {
+                calculated: targetScrollY,
+                safe: safeScrollY
+              }
             });
             const executeScroll = () => {
               scrollView.scrollTo({
@@ -978,37 +997,61 @@ var CopilotProvider = (_a) => {
                   y: safeScrollY,
                   animated: true
                 });
+                setTimeout(() => {
+                  scrollView.scrollTo({
+                    y: safeScrollY,
+                    animated: false
+                  });
+                }, 100);
               });
             };
             executeScroll();
             let retryCount = 0;
-            const maxRetries = 3;
+            const maxRetries = 5;
             const verifyScroll = () => {
               setTimeout(() => {
                 if (wrapper && scrollView && retryCount < maxRetries) {
                   wrapper.measureInWindow((x, y, windowWidth, windowHeight) => {
-                    const isOutOfView = y > screenHeight - 150 || y < 50;
-                    if (isOutOfView) {
+                    const minVisibleTop = 100;
+                    const minVisibleBottom = screenHeight - 200;
+                    const isWellPositioned = y >= minVisibleTop && y <= minVisibleBottom;
+                    const elementBottom = y + elementHeight;
+                    const isBottomVisible = elementBottom <= screenHeight;
+                    if (!isWellPositioned || elementHeight < screenHeight * 0.7 && !isBottomVisible) {
                       retryCount++;
-                      console.log(
-                        `Retry scroll ${retryCount}/${maxRetries}, element at y:${y}, target was ${targetPositionOnScreen}`
-                      );
-                      executeScroll();
+                      console.log(`Retry scroll ${retryCount}/${maxRetries}:`, {
+                        currentY: y,
+                        elementBottom,
+                        screenHeight,
+                        willRetry: retryCount < maxRetries
+                      });
+                      if (retryCount > 2) {
+                        const aggressiveScrollY = elementTopInScrollView - minVisibleTop;
+                        scrollView.scrollTo({
+                          y: Math.max(0, aggressiveScrollY),
+                          animated: false
+                        });
+                      } else {
+                        executeScroll();
+                      }
                       if (retryCount < maxRetries) {
                         verifyScroll();
                       }
                     } else {
-                      console.log(
-                        `Scroll successful for ${step.name}, element now at y:${y}`
-                      );
+                      console.log(`Scroll successful for ${step.name}:`, {
+                        finalY: y,
+                        elementBottom,
+                        isWellPositioned,
+                        isBottomVisible
+                      });
                     }
                   });
                 }
-              }, 400);
+              }, 500);
             };
             verifyScroll();
           });
-        }, 350);
+        }, 400);
       }
       setTimeout(
         () => {
@@ -1016,7 +1059,7 @@ var CopilotProvider = (_a) => {
             void moveModalToStep(step);
           }
         },
-        scrollView != null ? 1e3 : 0
+        scrollView != null ? 1200 : 0
       );
     }),
     [copilotEvents, moveModalToStep, scrollView, setCurrentStepState]
