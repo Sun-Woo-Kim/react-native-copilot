@@ -948,7 +948,7 @@ var CopilotProvider = (_a) => {
       if (scrollView != null && (step == null ? void 0 : step.wrapperRef.current)) {
         step.wrapperRef.current.measureInWindow((x, y, width, height) => {
           const yOffset = y > height ? y - height : 0;
-          scrollView.scrollTo({ y: yOffset, animated: false });
+          scrollView.scrollTo({ y: yOffset, animated: true });
         });
       }
       setTimeout(
