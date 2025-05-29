@@ -7,6 +7,7 @@
 - Update types to use `View` instead of `NativeMethods`
 - Remove dependency on deprecated `findNodeHandle`
 - Fix iOS scrolling issues and Android crashes in New Architecture
+- Add `tooltipTextColor` prop to customize tooltip text color
 
 ## 3.3.3
 

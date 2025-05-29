@@ -44,6 +44,7 @@ export type Labels = Partial<
 
 export interface TooltipProps {
   labels: Labels;
+  tooltipTextColor?: string;
 }
 
 export interface MaskProps {
@@ -69,6 +70,7 @@ export interface CopilotOptions {
   animationDuration?: number;
   tooltipComponent?: React.ComponentType<TooltipProps>;
   tooltipStyle?: ViewStyle;
+  tooltipTextColor?: string;
   stepNumberComponent?: React.ComponentType<any >;
   animated?: boolean;
   labels?: Labels;

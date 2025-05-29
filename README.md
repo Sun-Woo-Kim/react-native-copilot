@@ -222,6 +222,28 @@ You can customize the tooltip's arrow color:
 </CopilotProvider>
 ```
 
+### Custom tooltip text color
+
+You can customize the color of the text displayed in the tooltip:
+
+```js
+<CopilotProvider tooltipTextColor="#333333">
+  <App />
+</CopilotProvider>
+```
+
+You can also combine it with other customizations:
+
+```js
+<CopilotProvider
+  tooltipTextColor="#FFFFFF"
+  tooltipStyle={{ backgroundColor: "#9FA8DA" }}
+  arrowColor="#9FA8DA"
+>
+  <App />
+</CopilotProvider>
+```
+
 ### Custom overlay color
 
 You can customize the mask color - default is `rgba(0, 0, 0, 0.4)`, by passing a color string to the `CopilotProvider` component.

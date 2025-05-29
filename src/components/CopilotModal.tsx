@@ -52,6 +52,7 @@ export const CopilotModal = forwardRef<CopilotModalHandle, Props>(
       animationDuration = 400,
       tooltipComponent: TooltipComponent = Tooltip,
       tooltipStyle = {},
+      tooltipTextColor,
       stepNumberComponent: StepNumberComponent = StepNumber,
       overlay = typeof NativeModules.RNSVGSvgViewManager !== "undefined"
         ? "svg"
@@ -361,7 +362,10 @@ export const CopilotModal = forwardRef<CopilotModalHandle, Props>(
             key="tooltip"
             style={[styles.tooltip, tooltipStyles, tooltipStyle]}
           >
-            <TooltipComponent labels={labels} />
+            <TooltipComponent
+              labels={labels}
+              tooltipTextColor={tooltipTextColor}
+            />
           </Animated.View>
         </>
       );
